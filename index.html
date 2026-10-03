@@ -152,14 +152,14 @@ window.ToolReset = { hooks: {}, register: function (id, fn) { this.hooks[id] = f
   'use strict';
   var AppCore = window.AppCore;
   var SUPER_EMAIL = 'mdjafar7047@gmail.com';
-    var firebaseConfig = {
-    apiKey: "AIzaSyC9McRJDq8KugwFSGUuavEIS-sP_BFEADo",
+  var firebaseConfig = {
+    apiKey: "AIzaSyCYPNhX-DgW4U4qoGek5Gtkue1CC-sV_DF6A0w",
     authDomain: "ajm-printing-tools-4361f.firebaseapp.com",
     projectId: "ajm-printing-tools-4361f",
     storageBucket: "ajm-printing-tools-4361f.firebasestorage.app",
     messagingSenderId: "248912972318",
-    appId: "1:248912972318:web:8641fed8cf86d7d37d7c0f",
-    measurementId: "G-QBPZQ3EHWD"
+    appId: "1:248912972318:web:0641fedfcd7bcf7d7d7c0f",
+    measurementId: "G-CQPZQ3EHWD"
   };
   AppCore.config.firebase = firebaseConfig;
   AppCore.config.superAdminEmail = SUPER_EMAIL;
@@ -226,7 +226,6 @@ window.ToolReset = { hooks: {}, register: function (id, fn) { this.hooks[id] = f
     if (c === 'auth/unauthorized-domain') return userErr('Ye domain Firebase me authorized nahi hai. Firebase Console > Authentication > Settings > Authorized domains me add karein.');
     if (c === 'auth/operation-not-supported-in-this-environment') return userErr('Google login sirf https:// link par chalta hai (file se nahi). Site ko host karke kholein.');
     if (c === 'auth/network-request-failed') return userErr('Internet connection check karein.');
-    if (c === 'auth/invalid-api-key' || c === 'auth/api-key-not-valid.-please-pass-a-valid-api-key.') return userErr('Firebase apiKey galat hai. Firebase Console se config dobara copy karein.');
     if (c === 'permission-denied' || c === 'firestore/permission-denied') return userErr('Firestore ne save karne se mana kiya. Firestore Rules check karein (firestore.rules file).');
     return userErr((e && e.message) ? e.message : 'Sign-in fail hua. Dobara try karein.');
   }
@@ -286,7 +285,7 @@ window.ToolReset = { hooks: {}, register: function (id, fn) { this.hooks[id] = f
 
   /* Buttons that count as "Print" / "Download PNG" (add more ids here for future tools) */
   var GATED = ['print','save','aadPrint','aadSave','ratPrint','ratSave','ppPrint','ppSave',
-               'votPrint','votSave','ayuPrint','ayuSave','wacPrint','wacSave','panPrint','panSave'];
+               'votPrint','votSave','ayuPrint','ayuSave','wacPrint','wacSave','panPrint','panSave','enhSave'];
   var SELECTOR = GATED.map(function (i) { return '#' + i; }).join(',');
 
   /* ---------- admin flag (set true from console / future Admin module = unlimited) ---------- */
@@ -957,6 +956,76 @@ input[type=range]{width:100%;accent-color:var(--acc)}
 #ajmAdmin .aa-role{border:1.5px solid #dde2ee;border-radius:8px;padding:6px 8px;font:inherit;font-size:.88rem;background:#fff}
 #ajmAdmin .aa-foot{margin:10px 0 0;font-size:.75rem;color:#94a3b8}
 @media print{#ajmAdmin,.app-admin,.ajm-out{display:none!important}}
+</style>
+<style id="mipStyle">
+/* ---- Multi-Image to PDF & Size Compressor (all classes prefixed mip-) ---- */
+.mip-wrap{max-width:1240px;margin:0 auto;padding:20px}
+.mip-drop{position:relative}
+.mip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px}
+.mip-item{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.mip-th{position:relative;background:#e6e9f2;border-radius:6px;aspect-ratio:3/4;display:grid;place-items:center;overflow:hidden}
+.mip-th img{width:100%;height:100%;object-fit:contain;display:block}
+.mip-th img:not([src]){visibility:hidden}
+.mip-pg{position:absolute;left:6px;top:6px;background:rgba(15,23,42,.88);color:#fff;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.mip-nm{font-size:.76rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mip-sz{font-size:.72rem;color:var(--mute);margin-top:-3px}
+.mip-ctl{display:flex;gap:4px}
+.mip-ctl button{flex:1;min-height:34px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;font:inherit;font-weight:700;font-size:.85rem;cursor:pointer;padding:0}
+.mip-ctl button:hover:not(:disabled){background:#f4f6fb}
+.mip-ctl button:disabled{opacity:.35;cursor:not-allowed}
+.mip-ctl button[data-act="del"]{color:#b91c1c}
+.mip-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.mip-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.mip-opt{text-align:left;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);padding:10px 12px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:2px}
+.mip-opt:hover{background:#f8f9fd}
+.mip-opt strong{font-size:.9rem}
+.mip-opt small{color:var(--mute);font-size:.76rem}
+.mip-opt[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-l);box-shadow:inset 0 0 0 1px var(--acc)}
+.mip-opt:focus-visible{outline:3px solid #a9bff7;outline-offset:2px}
+.mip-sub{margin-top:12px}
+.mip-go{width:100%;padding:14px 16px;font-size:1.02rem;display:flex;align-items:center;justify-content:center;gap:10px}
+.mip-go:disabled{opacity:.6;cursor:not-allowed}
+.mip-spin{width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;animation:jpgspin .7s linear infinite;flex:none}
+.mip-bar{height:8px;background:#e6e9f2;border-radius:999px;overflow:hidden;margin-top:14px}
+.mip-bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+.mip-stat{font-weight:700;color:#15803d;margin:14px 0 0;font-size:1rem}
+.mip-stat.warn{color:var(--warn)}
+.mip-target{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px}
+.mip-ck{height:auto;align-items:flex-start;line-height:1.4;padding:2px 0}
+.mip-ck input{margin-top:3px;flex:none}
+@media (max-width:900px){.mip-wrap{padding:12px}.mip-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}}
+</style>
+
+<style id="enhStyle">
+/* ---- AI Photo & Document Enhancer (all classes / ids prefixed enh) ---- */
+.enh-wrap{max-width:1240px;margin:0 auto;padding:20px}
+.enh-drop{position:relative}
+.enh-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:16px;align-items:start}
+.enh-col{display:flex;flex-direction:column;gap:16px}
+.enh-grid .card,.enh-col .card{margin-bottom:0}
+.enh-stage{position:relative;overflow:hidden;border-radius:8px;border:1px solid var(--line);background:repeating-conic-gradient(#e9ecf4 0 25%,#f8f9fd 0 50%) 0 0/16px 16px;touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none;line-height:0}
+.enh-stage canvas{display:block;width:100%;height:auto}
+#enhBefore{position:absolute;left:0;top:0;width:100%;height:100%;clip-path:inset(0 50% 0 0)}
+.enh-hd{position:absolute;top:0;bottom:0;left:50%;width:3px;margin-left:-1.5px;background:#fff;box-shadow:0 0 0 1px rgba(15,23,42,.4);outline:none}
+.enh-hd::after{content:"\2194";position:absolute;top:50%;left:50%;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;background:var(--acc);color:#fff;font:700 18px/38px system-ui,sans-serif;text-align:center;box-shadow:0 2px 8px rgba(15,23,42,.35)}
+.enh-hd:focus-visible::after{outline:3px solid #a9bff7;outline-offset:2px}
+.enh-tag{position:absolute;top:8px;background:rgba(15,23,42,.82);color:#fff;font:700 .72rem/1 system-ui,sans-serif;padding:5px 10px;border-radius:999px;pointer-events:none}
+.enh-tag.l{left:8px}.enh-tag.r{right:8px}
+.enh-modes{display:grid;gap:10px}
+.enh-mode{text-align:left;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);padding:10px 12px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:2px}
+.enh-mode:hover{background:#f8f9fd}
+.enh-mode strong{font-size:.92rem}
+.enh-mode small{color:var(--mute);font-size:.76rem}
+.enh-mode[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-l);box-shadow:inset 0 0 0 1px var(--acc)}
+.enh-mode:focus-visible{outline:3px solid #a9bff7;outline-offset:2px}
+.enh-sl{margin-bottom:12px}
+.enh-sl label{display:flex;justify-content:space-between;font-size:.84rem;font-weight:600;margin-bottom:4px}
+.enh-sl output{color:var(--acc);font-weight:700}
+.enh-sl input[type=range]{width:100%;accent-color:var(--acc);margin:0}
+.enh-go{width:100%;padding:14px 16px;font-size:1.02rem}
+.enh-go:disabled{opacity:.6;cursor:not-allowed}
+.enh-stat{font-weight:700;color:#15803d;margin:12px 0 0;font-size:.95rem}
+@media (max-width:900px){.enh-wrap{padding:12px}.enh-grid{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -2025,6 +2094,170 @@ input[type=range]{width:100%;accent-color:var(--acc)}
       </div>
     </section>
   </aside>
+  </div>
+</section>
+
+<!-- ============================================================
+     VIEW: MULTI-IMAGE TO PDF & SIZE COMPRESSOR   - all element IDs start with "mip"
+     Pure client-side: canvas -> JPEG (quality / target-size search) -> built-in PDF writer / ZIP writer.
+     ============================================================ -->
+<section class="tool-view" id="view-multipdf" hidden>
+  <div class="backbar"><div class="in">
+    <button type="button" class="btn" data-back>← Back to All Tools</button>
+    <span class="crumb">Multi-Image to PDF &amp; Size Compressor</span>
+  </div></div>
+
+  <div class="mip-wrap">
+    <section class="card">
+      <header><h2>1. Upload photos</h2><span class="sub">JPG / PNG, 1 se 30+ ek sath</span></header>
+      <div class="body">
+        <label class="drop mip-drop" id="mipDrop">
+          <input type="file" id="mipFile" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple>
+          <strong>Photos chunein ya yahan drop karein</strong>
+          <span>Ek sath kitni bhi JPG/PNG photos. Sab kaam aapke browser me hota hai; kuch upload nahi hota.</span>
+        </label>
+        <p class="aad-msg" id="mipMsg" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <header><h2>2. Pages (order)</h2><span class="sub" id="mipCount">0 photos</span></header>
+      <div class="body">
+        <p class="sub" id="mipEmpty">Abhi koi photo nahi. Upar se photos add karein; PDF isi order me Page 1, Page 2... banega.</p>
+        <div class="mip-grid" id="mipGrid"></div>
+        <div class="mip-tools" id="mipTools" hidden>
+          <button type="button" class="btn sm" id="mipSort">Naam se sort karein</button>
+          <button type="button" class="btn sm" id="mipClear">Sab hatayein</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <header><h2>3. Output &amp; size</h2></header>
+      <div class="body">
+        <p class="sec">Output</p>
+        <div class="mip-opts" role="group" aria-label="Output format">
+          <button type="button" class="mip-opt" data-out="pdf" aria-pressed="true"><strong>Single Combined PDF</strong><small>Page by page, A4 fit</small></button>
+          <button type="button" class="mip-opt" data-out="jpg" aria-pressed="false"><strong>Compressed JPGs</strong><small>Har photo alag JPG</small></button>
+        </div>
+        <div class="mip-sub" id="mipPdfOpts">
+          <div class="row">
+            <div class="f"><label for="mipOrient">Page orientation</label>
+              <select id="mipOrient"><option value="portrait" selected>A4 Portrait (sab pages)</option><option value="auto">Auto (landscape photo = landscape page)</option></select></div>
+            <div class="f"><label for="mipMargin">Margin</label>
+              <select id="mipMargin"><option value="0">None (full page)</option><option value="5" selected>5 mm</option><option value="10">10 mm</option></select></div>
+          </div>
+        </div>
+        <div class="mip-sub" id="mipJpgOpts" hidden>
+          <label class="ck"><input type="checkbox" id="mipZip" checked><span>Sab JPGs ek ZIP file me download karein (recommended)</span></label>
+        </div>
+
+        <p class="sec">Target file size (universal)</p>
+        <div class="f" id="mipTargetBox">
+          <label for="mipTarget">Target Size</label>
+          <div class="mip-target">
+            <input type="number" id="mipTarget" min="1" step="any" value="400" inputmode="decimal" aria-label="Target size value">
+            <select id="mipUnit" aria-label="Unit"><option value="KB" selected>KB</option><option value="MB">MB</option></select>
+          </div>
+        </div>
+        <label class="ck mip-ck mip-sub"><input type="checkbox" id="mipAuto" checked><span><b>Auto Best Fit</b> (Quality retain karte hue target size ke andar rakhein)</span></label>
+        <p class="sub mip-sub" id="mipHint"></p>
+        <div class="f mip-sub" id="mipSlideWrap" hidden>
+          <label for="mipSlider"><span>Manual JPEG quality</span><output id="mipSlideVal">75%</output></label>
+          <input type="range" id="mipSlider" min="10" max="100" step="5" value="75">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <header><h2>4. Convert &amp; download</h2></header>
+      <div class="body">
+        <button type="button" class="btn pri mip-go" id="mipGo" disabled><span class="mip-spin" id="mipSpin" hidden></span><span id="mipGoText">Convert &amp; Download</span></button>
+        <div id="mipProg" hidden>
+          <div class="mip-bar"><i id="mipBar"></i></div>
+          <p class="sub" id="mipProgText" style="margin-top:8px"></p>
+        </div>
+        <div id="mipResult" hidden>
+          <p class="mip-stat" id="mipStat"></p>
+          <p class="sub" id="mipMeta" style="margin-top:4px"></p>
+          <div class="acts"><button type="button" class="btn" id="mipAgain">Download again</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ============================================================
+     VIEW: AI PHOTO & DOCUMENT ENHANCER   - all element IDs start with "enh"
+     ============================================================ -->
+<section class="tool-view" id="view-enhancer" hidden>
+  <div class="backbar"><div class="in">
+    <button type="button" class="btn" data-back>← Back to All Tools</button>
+    <span class="crumb">AI Photo &amp; Document Enhancer (HD Quality Booster)</span>
+  </div></div>
+
+  <div class="enh-wrap">
+    <section class="card" id="enhUploadCard">
+      <header><h2>1. Photo / Document upload karein</h2><span class="sub">JPG / PNG / WEBP</span></header>
+      <div class="body">
+        <label class="drop enh-drop" id="enhDrop">
+          <input type="file" id="enhFile" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp">
+          <strong>Photo chunein ya yahan drop karein</strong>
+          <span>Blurry, andheri ya faded photo / document. Sab kaam aapke browser me hota hai; kuch upload nahi hota.</span>
+        </label>
+        <p class="aad-msg" id="enhMsg" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <div class="enh-grid" id="enhEditor" hidden>
+      <section class="card">
+        <header><h2>Before / After</h2><span class="sub" id="enhDims"></span></header>
+        <div class="body">
+          <div class="enh-stage" id="enhStage">
+            <canvas id="enhAfter" width="4" height="3"></canvas>
+            <canvas id="enhBefore" width="4" height="3"></canvas>
+            <div class="enh-hd" id="enhHd" role="slider" tabindex="0" aria-label="Before After slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></div>
+            <span class="enh-tag l">BEFORE</span><span class="enh-tag r">AFTER</span>
+          </div>
+          <p class="sub" style="margin-top:8px">Slider ko left-right drag karein. Preview chhota hota hai; download full HD quality me hota hai.</p>
+        </div>
+      </section>
+
+      <div class="enh-col">
+        <section class="card">
+          <header><h2>2. One-click mode</h2></header>
+          <div class="body">
+            <div class="enh-modes" role="group" aria-label="Enhance mode">
+              <button type="button" class="enh-mode" data-mode="auto" aria-pressed="true"><strong>✨ Smart Auto Enhance</strong><small>General photo clarity, contrast aur colour</small></button>
+              <button type="button" class="enh-mode" data-mode="doc" aria-pressed="false"><strong>📄 Document / ID Sharp Mode</strong><small>Text, seal, signature high contrast aur legible</small></button>
+              <button type="button" class="enh-mode" data-mode="portrait" aria-pressed="false"><strong>🧑 Portrait / Face HD</strong><small>Skin tone smooth + clarity balance</small></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <header><h2>3. Fine-tune</h2><button type="button" class="btn sm" id="enhReset">Reset</button></header>
+          <div class="body">
+            <div class="enh-sl"><label for="enhSharp">Sharpen <output id="enhSharpV">0</output></label><input type="range" id="enhSharp" min="0" max="100" step="1" value="45"></div>
+            <div class="enh-sl"><label for="enhCon">Contrast <output id="enhConV">0</output></label><input type="range" id="enhCon" min="-50" max="50" step="1" value="10"></div>
+            <div class="enh-sl"><label for="enhBri">Brightness <output id="enhBriV">0</output></label><input type="range" id="enhBri" min="-50" max="50" step="1" value="0"></div>
+            <div class="enh-sl"><label for="enhDen">Denoise <output id="enhDenV">0</output></label><input type="range" id="enhDen" min="0" max="100" step="1" value="25"></div>
+            <div class="enh-sl"><label for="enhVib">Colour Vibrance <output id="enhVibV">0</output></label><input type="range" id="enhVib" min="0" max="100" step="1" value="30"></div>
+            <label class="ck"><input type="checkbox" id="enhAuto" checked><span>Auto-contrast &amp; histogram stretch</span></label>
+            <label class="ck"><input type="checkbox" id="enhUp"><span>2× HD upscale (chhoti photo ke liye)</span></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <header><h2>4. Download</h2></header>
+          <div class="body">
+            <button type="button" class="btn pri enh-go" id="enhSave" disabled>Download HD Enhanced Image</button>
+            <p class="enh-stat" id="enhStat" hidden></p>
+            <div class="acts"><button type="button" class="btn" id="enhChange">Dusri photo chunein</button></div>
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -5728,6 +5961,695 @@ ToolReset.register('photocomp', function () {
 </script>
 
 <!-- ============================================================
+     SCRIPT: MULTI-IMAGE TO PDF & SIZE COMPRESSOR   (ids/classes prefixed "mip")
+     ============================================================ -->
+<script id="mipScript">
+(function () {
+'use strict';
+const $ = id => document.getElementById(id);
+const MAX_FILES = 300;
+/* Quality ladder, best -> smallest: [longest side px, JPEG quality]. The batch fitter picks levels for ALL photos together. */
+const LADDER = [[2400,.92],[2400,.85],[2000,.78],[1700,.72],[1500,.65],[1300,.60],[1100,.55],[900,.50],[750,.45],[600,.40],[480,.35],[360,.30],[260,.25]];
+const AREA_CAP = 16000000;                                    /* iOS-safe canvas area */
+const UNIT = { KB: 1024, MB: 1048576 };
+
+let items = [], uid = 0, token = 0, busy = false, thumbBusy = false;
+let outMode = 'pdf', result = null;
+
+function fmt(b){ return b >= 1048576 ? (b / 1048576).toFixed(2) + ' MB' : (b / 1024).toFixed(1) + ' KB'; }
+function setMsg(t, kind){ const m = $('mipMsg'); m.textContent = t || ''; m.className = 'aad-msg' + (kind ? ' ' + kind : ''); }
+const tick = () => new Promise(r => setTimeout(r, 0));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- image helpers ---------- */
+function loadImg(file){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => res({ im, url });
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('decode')); };
+    im.src = url;
+  });
+}
+function freeImg(o){ o.im.onload = o.im.onerror = null; o.im.removeAttribute('src'); URL.revokeObjectURL(o.url); }
+const toBlob = (c, q) => new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('encode')), 'image/jpeg', q));
+
+async function drawFile(file, maxSide){
+  const o = await loadImg(file);
+  try {
+    const w = o.im.naturalWidth, h = o.im.naturalHeight;
+    if (!w || !h) throw new Error('size');
+    let s = 1;
+    if (maxSide && Math.max(w, h) > maxSide) s = maxSide / Math.max(w, h);
+    if (w * h * s * s > AREA_CAP) s = Math.sqrt(AREA_CAP / (w * h));
+    const cw = Math.max(1, Math.round(w * s)), ch = Math.max(1, Math.round(h * s));
+    const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+    const x = c.getContext('2d');
+    x.fillStyle = '#fff'; x.fillRect(0, 0, cw, ch);            /* PNG transparency -> white */
+    x.imageSmoothingQuality = 'high'; x.drawImage(o.im, 0, 0, cw, ch);
+    return c;
+  } finally { freeImg(o); }
+}
+function scaled(c, f){
+  if (f >= 1) return c;
+  const n = document.createElement('canvas');
+  n.width = Math.max(1, Math.round(c.width * f)); n.height = Math.max(1, Math.round(c.height * f));
+  const x = n.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(c, 0, 0, n.width, n.height);
+  return n;
+}
+/* highest JPEG quality that stays under `target` bytes; shrinks pixels only if even the lowest quality is too big */
+async function fitTarget(c0, target){
+  const HI = 0.88, LO = 0.35;
+  let f = 1, last = null;
+  for (let a = 0; a < 10; a++) {
+    const c = a ? scaled(c0, f) : c0;
+    const bLo = await toBlob(c, LO);
+    last = { blob: bLo, w: c.width, h: c.height };
+    if (bLo.size > target) {
+      f *= Math.min(0.85, Math.max(0.4, Math.sqrt(target / bLo.size) * 0.97));
+      if (Math.min(c0.width, c0.height) * f < 360) break;
+      continue;
+    }
+    const bHi = await toBlob(c, HI);
+    if (bHi.size <= target) return { blob: bHi, w: c.width, h: c.height };
+    let best = last, lo = LO, hi = HI;
+    for (let i = 0; i < 6; i++) {
+      const m = (lo + hi) / 2, b = await toBlob(c, m);
+      if (b.size <= target) { best = { blob: b, w: c.width, h: c.height }; lo = m; } else hi = m;
+    }
+    return best;
+  }
+  return last;
+}
+/* one canvas -> one ladder level (deterministic: measuring and final encoding give identical bytes) */
+async function encodeAt(c0, k){
+  const long = Math.max(c0.width, c0.height), f = Math.min(1, LADDER[k][0] / long);
+  const c = f < 1 ? scaled(c0, f) : c0;
+  try { return { blob: await toBlob(c, LADDER[k][1]), w: c.width, h: c.height }; }
+  finally { if (c !== c0) c.width = c.height = 0; }
+}
+/* size of this photo at every ladder level; cheapest levels first, stops once a level is clearly above `cap` */
+async function measureLadder(file, cap){
+  const c0 = await drawFile(file, LADDER[0][0]);
+  const sizes = new Array(LADDER.length).fill(Infinity);
+  try {
+    for (let k = LADDER.length - 1; k >= 0; k--) {
+      const r = await encodeAt(c0, k);
+      sizes[k] = r.blob.size;
+      if (r.blob.size > cap) break;
+    }
+  } finally { c0.width = c0.height = 0; }
+  return sizes;
+}
+/* Batch fitter: ONE common budget B for all photos.
+   1) best uniform level where the sum fits  2) leftover bytes are spent upgrading the lowest-quality photos first. */
+function pickLevels(S, B){
+  const n = S.length, last = LADDER.length - 1;
+  const sum = L => { let t = 0; for (let i = 0; i < n; i++) t += S[i][L]; return t; };
+  let k = -1;
+  for (let L = 0; L <= last; L++) if (sum(L) <= B) { k = L; break; }
+  if (k < 0) return { lv: new Array(n).fill(last), total: sum(last), feasible: false };
+  const lv = new Array(n).fill(k); let total = sum(k), changed = true;
+  while (changed) {
+    changed = false;
+    const order = lv.map((l, i) => i).sort((a, b) => (lv[a] - lv[b] === 0) ? ((S[a][Math.max(lv[a] - 1, 0)] - S[a][lv[a]]) - (S[b][Math.max(lv[b] - 1, 0)] - S[b][lv[b]])) : (lv[b] - lv[a]));
+    for (const i of order) {
+      const l = lv[i]; if (l <= 0 || !isFinite(S[i][l - 1])) continue;
+      const extra = S[i][l - 1] - S[i][l];
+      if (total + extra <= B) { lv[i] = l - 1; total += extra; changed = true; }
+    }
+  }
+  return { lv, total, feasible: true };
+}
+
+/*PDFZIP-START*/
+/* ---------- minimal PDF writer (one JPEG per A4 page) ---------- */
+function buildPdf(pages, cfg){
+  const enc = new TextEncoder(), chunks = [], offs = [];
+  let pos = 0;
+  const push = d => { const u = typeof d === 'string' ? enc.encode(d) : d; chunks.push(u); pos += u.length; };
+  const A4W = 595.28, A4H = 841.89, M = (cfg.margin || 0) * 72 / 25.4, n = pages.length;
+  push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  offs[1] = pos; push('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+  offs[2] = pos; push('2 0 obj\n<< /Type /Pages /Kids [' + pages.map((_, i) => (5 + 3 * i) + ' 0 R').join(' ') + '] /Count ' + n + ' >>\nendobj\n');
+  pages.forEach((p, i) => {
+    const imgN = 3 + 3 * i, cN = 4 + 3 * i, pN = 5 + 3 * i;
+    const land = cfg.orient === 'auto' && p.w > p.h;
+    const PW = land ? A4H : A4W, PH = land ? A4W : A4H;
+    const s = Math.min((PW - 2 * M) / p.w, (PH - 2 * M) / p.h);
+    const dw = p.w * s, dh = p.h * s, dx = (PW - dw) / 2, dy = (PH - dh) / 2;
+    offs[imgN] = pos;
+    push(imgN + ' 0 obj\n<< /Type /XObject /Subtype /Image /Width ' + p.w + ' /Height ' + p.h + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + p.bytes.length + ' >>\nstream\n');
+    push(p.bytes); push('\nendstream\nendobj\n');
+    const cs = 'q ' + dw.toFixed(2) + ' 0 0 ' + dh.toFixed(2) + ' ' + dx.toFixed(2) + ' ' + dy.toFixed(2) + ' cm /Im0 Do Q';
+    offs[cN] = pos; push(cN + ' 0 obj\n<< /Length ' + cs.length + ' >>\nstream\n' + cs + '\nendstream\nendobj\n');
+    offs[pN] = pos;
+    push(pN + ' 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + PW.toFixed(2) + ' ' + PH.toFixed(2) + '] /Resources << /XObject << /Im0 ' + imgN + ' 0 R >> >> /Contents ' + cN + ' 0 R >>\nendobj\n');
+  });
+  const total = 2 + 3 * n, xref = pos;
+  let x = 'xref\n0 ' + (total + 1) + '\n0000000000 65535 f \n';
+  for (let k = 1; k <= total; k++) x += String(offs[k]).padStart(10, '0') + ' 00000 n \n';
+  x += 'trailer\n<< /Size ' + (total + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF';
+  push(x);
+  return new Blob(chunks, { type: 'application/pdf' });
+}
+
+/* ---------- minimal ZIP writer (stored, no compression: JPGs are already compressed) ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u){ let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC_T[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function buildZip(files){
+  const enc = new TextEncoder(), parts = [], cd = [], d = new Date();
+  const dt = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+  const dd = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  let off = 0, cdSize = 0;
+  files.forEach(f => {
+    const nm = enc.encode(f.name), crc = crc32(f.bytes), sz = f.bytes.length;
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dt, true); h.setUint16(12, dd, true); h.setUint32(14, crc, true); h.setUint32(18, sz, true);
+    h.setUint32(22, sz, true); h.setUint16(26, nm.length, true); h.setUint16(28, 0, true);
+    parts.push(h.buffer, nm, f.bytes);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true);
+    c.setUint16(10, 0, true); c.setUint16(12, dt, true); c.setUint16(14, dd, true); c.setUint32(16, crc, true);
+    c.setUint32(20, sz, true); c.setUint32(24, sz, true); c.setUint16(28, nm.length, true); c.setUint32(42, off, true);
+    cd.push(c.buffer, nm); cdSize += 46 + nm.length;
+    off += 30 + nm.length + sz;
+  });
+  const e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true);
+  e.setUint32(12, cdSize, true); e.setUint32(16, off, true);
+  return new Blob(parts.concat(cd, [e.buffer]), { type: 'application/zip' });
+}
+/*PDFZIP-END*/
+
+function saveBlob(blob, name){
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+/* ---------- thumbnails + page grid ---------- */
+async function makeThumb(file){
+  const o = await loadImg(file);
+  try {
+    const w = o.im.naturalWidth, h = o.im.naturalHeight, s = Math.min(1, 240 / Math.max(w, h));
+    const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(o.im, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.72);
+  } finally { freeImg(o); }
+}
+async function thumbQueue(){
+  if (thumbBusy) return;
+  thumbBusy = true;
+  try {
+    for (;;) {
+      const it = items.find(x => !x.thumb && !x.fail);
+      if (!it) break;
+      try { it.thumb = await makeThumb(it.file); } catch (e) { it.fail = true; }
+      const el = $('mipGrid').querySelector('[data-id="' + it.id + '"] img');
+      if (el && it.thumb) el.src = it.thumb;
+      await tick();
+    }
+  } finally { thumbBusy = false; }
+}
+function mkBtn(act, label, text, disabled){
+  const b = document.createElement('button');
+  b.type = 'button'; b.dataset.act = act; b.setAttribute('aria-label', label); b.title = label; b.textContent = text; b.disabled = !!disabled;
+  return b;
+}
+function render(){
+  const g = $('mipGrid'); g.textContent = '';
+  items.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'mip-item'; d.dataset.id = it.id;
+    const th = document.createElement('div'); th.className = 'mip-th';
+    const img = document.createElement('img'); img.alt = 'Page ' + (i + 1) + ' preview'; if (it.thumb) img.src = it.thumb;
+    const pg = document.createElement('span'); pg.className = 'mip-pg'; pg.textContent = 'Page ' + (i + 1);
+    th.append(img, pg);
+    const nm = document.createElement('div'); nm.className = 'mip-nm'; nm.textContent = it.name; nm.title = it.name;
+    const sz = document.createElement('div'); sz.className = 'mip-sz'; sz.textContent = fmt(it.file.size);
+    const ctl = document.createElement('div'); ctl.className = 'mip-ctl';
+    ctl.append(mkBtn('left', 'Move earlier', '◀', i === 0), mkBtn('right', 'Move later', '▶', i === items.length - 1), mkBtn('del', 'Remove photo', '✕', false));
+    d.append(th, nm, sz, ctl); g.appendChild(d);
+  });
+  const n = items.length;
+  $('mipCount').textContent = n + (n === 1 ? ' photo' : ' photos');
+  $('mipEmpty').hidden = n > 0; $('mipTools').hidden = n === 0; $('mipSort').hidden = n < 2;
+  if (!busy) $('mipGo').disabled = n === 0;
+}
+
+function addFiles(list){
+  const files = Array.from(list || []);
+  if (!files.length || busy) return;
+  const ok = files.filter(f => /^image\/(jpeg|png)$/i.test(f.type) || /\.(jpe?g|png)$/i.test(f.name));
+  const skipped = files.length - ok.length;
+  let room = MAX_FILES - items.length, extra = 0;
+  if (ok.length > room) { extra = ok.length - room; ok.length = Math.max(room, 0); }
+  ok.forEach(f => items.push({ id: ++uid, file: f, name: f.name || 'photo', thumb: null, fail: false }));
+  clearResult();
+  render(); thumbQueue();
+  const notes = [];
+  if (ok.length) notes.push(ok.length + ' photo add hui (total ' + items.length + ').');
+  if (skipped) notes.push(skipped + ' file skip hui (sirf JPG/PNG chalti hai).');
+  if (extra) notes.push(extra + ' photo limit (' + MAX_FILES + ') ki wajah se chhod di.');
+  setMsg(notes.join(' '), (skipped || extra) ? 'warn' : (ok.length ? 'ok' : 'err'));
+}
+function clearResult(){
+  result = null; $('mipResult').hidden = true; $('mipStat').textContent = ''; $('mipMeta').textContent = '';
+  $('mipStat').classList.remove('warn'); if (!busy) $('mipProg').hidden = true;
+}
+
+/* ---------- settings UI ---------- */
+function targetBytes(){
+  const v = parseFloat($('mipTarget').value);
+  if (!isFinite(v) || v <= 0) return 0;
+  return Math.floor(v * UNIT[$('mipUnit').value]);
+}
+function syncUI(){
+  const auto = $('mipAuto').checked, T = targetBytes();
+  document.querySelectorAll('.mip-opt[data-out]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.out === outMode)));
+  $('mipPdfOpts').hidden = outMode !== 'pdf'; $('mipJpgOpts').hidden = outMode !== 'jpg';
+  $('mipSlideWrap').hidden = auto;
+  $('mipTarget').disabled = $('mipUnit').disabled = !auto;
+  $('mipTargetBox').style.opacity = auto ? '' : '.5';
+  $('mipSlideVal').textContent = $('mipSlider').value + '%';
+  let h;
+  if (!auto) h = 'Manual mode: neeche slider se JPEG quality chunein. Target size is mode me lagu nahi hota.';
+  else if (outMode === 'pdf') h = 'Puri PDF ka kul size ' + (T ? fmt(T) : 'target') + ' ke andar rahega. Saari photos ek sath adjust hoti hain: jitni bachat, utni zyada quality.';
+  else h = 'Har ek JPG ' + (T ? fmt(T) : 'target') + ' ke andar hogi. Quality jitni ho sake retain hogi; zaroorat padne par hi pixel size ghatega.';
+  $('mipHint').textContent = h;
+}
+document.querySelectorAll('.mip-opt[data-out]').forEach(b => b.addEventListener('click', () => { if (busy) return; outMode = b.dataset.out; clearResult(); syncUI(); }));
+['input', 'change'].forEach(ev => { $('mipTarget').addEventListener(ev, () => { clearResult(); syncUI(); }); });
+$('mipUnit').addEventListener('change', () => { clearResult(); syncUI(); });
+$('mipAuto').addEventListener('change', () => { clearResult(); syncUI(); });
+$('mipSlider').addEventListener('input', () => { $('mipSlideVal').textContent = $('mipSlider').value + '%'; clearResult(); });
+
+/* ---------- upload ---------- */
+$('mipFile').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+const drop = $('mipDrop');
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => { if (e.dataTransfer) addFiles(e.dataTransfer.files); });
+
+/* ---------- page order / remove ---------- */
+$('mipGrid').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b || busy) return;
+  const card = b.closest('.mip-item'); const idx = items.findIndex(x => String(x.id) === card.dataset.id); if (idx < 0) return;
+  const act = b.dataset.act;
+  if (act === 'left' && idx > 0) { const t = items[idx - 1]; items[idx - 1] = items[idx]; items[idx] = t; }
+  else if (act === 'right' && idx < items.length - 1) { const t = items[idx + 1]; items[idx + 1] = items[idx]; items[idx] = t; }
+  else if (act === 'del') items.splice(idx, 1);
+  clearResult(); render();
+});
+$('mipSort').addEventListener('click', () => {
+  if (busy) return;
+  items.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+  clearResult(); render();
+});
+$('mipClear').addEventListener('click', () => { if (busy) return; items = []; clearResult(); setMsg(''); render(); });
+
+/* ---------- convert & download ---------- */
+function setBusy(on){
+  busy = on; $('mipSpin').hidden = !on; $('mipGo').disabled = on || !items.length;
+  $('mipGoText').textContent = on ? 'Processing...' : 'Convert & Download';
+}
+function baseName(n){ return (n || 'photo').replace(/\.[^.]*$/, '').replace(/[\\/:*?"<>|\s]+/g, '_').slice(0, 40) || 'photo'; }
+function deliver(){
+  if (!result) return;
+  if (result.single) { saveBlob(result.single.blob, result.single.name); return; }
+  (async () => { for (const f of result.files) { saveBlob(f.blob, f.name); await sleep(600); } })();
+}
+function prog(pct, text){ $('mipBar').style.width = Math.round(pct) + '%'; if (text) $('mipProgText').textContent = text; }
+function pdfOverhead(n, cfg){
+  const dummy = []; for (let i = 0; i < n; i++) dummy.push({ bytes: new Uint8Array(0), w: 2400, h: 2400 });
+  return buildPdf(dummy, cfg).size + 24 * n + 64;
+}
+const bytesOf = async b => new Uint8Array(await b.arrayBuffer());
+
+/* ----- PDF: the whole file must stay within T ----- */
+async function processPdf(list, cfg, auto, T, my){
+  const n = list.length, stamp = new Date().toISOString().slice(0, 10), failed = [];
+  const name = 'AJM_Images_' + stamp + '.pdf';
+  if (!auto) {                                              /* manual quality, no size target */
+    const pages = [];
+    for (let i = 0; i < n; i++) {
+      if (my !== token) return null;
+      prog(5 + 85 * i / n, 'Photo ' + (i + 1) + ' / ' + n + ' process ho rahi hai...'); await tick();
+      try {
+        const c = await drawFile(list[i].file, 0);
+        const b = await toBlob(c, cfg.quality / 100); pages.push({ bytes: await bytesOf(b), w: c.width, h: c.height }); c.width = c.height = 0;
+      } catch (e) { failed.push(list[i].name); }
+    }
+    if (!pages.length) throw new Error('Koi bhi photo process nahi ho saki. Dusri JPG/PNG try karein.');
+    prog(93, 'PDF ban rahi hai...'); await tick();
+    const blob = buildPdf(pages, cfg);
+    return { result: { single: { blob, name } }, outBytes: blob.size, count: pages.length, failed, ok: true, label: pages.length + ' page ki PDF', note: '' };
+  }
+  /* auto best fit, phase 1: measure every photo at every quality level (cheap levels first) */
+  const share = Math.max(T - pdfOverhead(n, cfg), 0) / n;
+  const cap = Math.max(Math.min(T, share * 10), 30 * 1024);
+  const M = [];
+  for (let i = 0; i < n; i++) {
+    if (my !== token) return null;
+    prog(3 + 50 * i / n, 'Photo ' + (i + 1) + ' / ' + n + ' analyse ho rahi hai...'); await tick();
+    try { M.push({ it: list[i], sizes: await measureLadder(list[i].file, cap) }); } catch (e) { failed.push(list[i].name); }
+  }
+  if (!M.length) throw new Error('Koi bhi photo process nahi ho saki. Dusri JPG/PNG try karein.');
+  const S = M.map(m => m.sizes);
+  /* phase 2: fit all photos into one budget, encode, verify the real PDF size */
+  let B = T - pdfOverhead(M.length, cfg), tries = 0, blob, pk;
+  const res = new Array(M.length);
+  for (;;) {
+    pk = pickLevels(S, B);
+    for (let i = 0; i < M.length; i++) {
+      if (my !== token) return null;
+      if (res[i] && res[i].lv === pk.lv[i]) continue;
+      prog(55 + 35 * i / M.length, 'Photo ' + (i + 1) + ' / ' + M.length + ' best-fit ho rahi hai...'); await tick();
+      const c = await drawFile(M[i].it.file, LADDER[0][0]);
+      try { const r = await encodeAt(c, pk.lv[i]); res[i] = { lv: pk.lv[i], bytes: await bytesOf(r.blob), w: r.w, h: r.h }; }
+      finally { c.width = c.height = 0; }
+    }
+    prog(92, 'PDF ban rahi hai...'); await tick();
+    blob = buildPdf(res.map(r => ({ bytes: r.bytes, w: r.w, h: r.h })), cfg);
+    if (blob.size <= T || !pk.feasible || ++tries > 3) break;
+    B -= (blob.size - T) + 32;
+  }
+  const ok = pk.feasible && blob.size <= T;
+  const note = ok ? '' : 'Target ' + fmt(T) + ' is photos ke liye bahut chhota hai; sabse chhoti quality par bhi PDF ' + fmt(blob.size) + ' hai. Target badhayein ya photos kam karein.';
+  return { result: { single: { blob, name } }, outBytes: blob.size, count: M.length, failed, ok, label: M.length + (M.length === 1 ? ' page ki PDF' : ' pages ki PDF'), note };
+}
+
+/* ----- JPGs: every image must stay within T ----- */
+async function processJpgs(list, cfg, auto, T, my){
+  const n = list.length, stamp = new Date().toISOString().slice(0, 10), failed = [], files = [];
+  let kept = 0, over = 0, biggest = 0;
+  for (let i = 0; i < n; i++) {
+    if (my !== token) return null;
+    prog(3 + 87 * i / n, 'Photo ' + (i + 1) + ' / ' + n + ' compress ho rahi hai...'); await tick();
+    try {
+      let blob;
+      if (auto && list[i].file.type === 'image/jpeg' && list[i].file.size <= T) { blob = list[i].file; kept++; }   /* already small enough: untouched */
+      else {
+        const c = await drawFile(list[i].file, 0);
+        try { blob = auto ? (await fitTarget(c, T)).blob : await toBlob(c, cfg.quality / 100); } finally { c.width = c.height = 0; }
+      }
+      if (auto && blob.size > T) over++;
+      biggest = Math.max(biggest, blob.size);
+      files.push({ name: String(i + 1).padStart(2, '0') + '_' + baseName(list[i].name) + '_compressed.jpg', blob });
+    } catch (e) { failed.push(list[i].name); }
+  }
+  if (!files.length) throw new Error('Koi bhi photo process nahi ho saki. Dusri JPG/PNG try karein.');
+  prog(93, 'Files tayyar ho rahi hain...'); await tick();
+  let outBytes = 0; files.forEach(f => { outBytes += f.blob.size; });
+  let res;
+  if (files.length === 1) res = { single: files[0] };
+  else if ($('mipZip').checked) {
+    const zf = []; for (const f of files) zf.push({ name: f.name, bytes: await bytesOf(f.blob) });
+    res = { single: { blob: buildZip(zf), name: 'AJM_Compressed_JPGs_' + stamp + '.zip' } };
+  } else res = { files };
+  const note = (auto ? 'Sabse badi JPG: ' + fmt(biggest) + '.' : '') + (kept ? ' ' + kept + ' photo pehle se target ke andar thi, unhe chheda nahi.' : '') +
+    (over ? ' ' + over + ' photo ' + fmt(T) + ' tak nahi pahunch saki (bahut chhota target).' : '');
+  return { result: res, outBytes, count: files.length, failed, ok: over === 0, label: files.length + (files.length === 1 ? ' compressed JPG' : ' compressed JPGs'), note: note.trim() };
+}
+
+async function run(){
+  if (busy || !items.length) return;
+  const auto = $('mipAuto').checked, T = targetBytes();
+  if (auto && !T) { setMsg('Target Size sahi number me daalein (jaise 400 KB).', 'err'); $('mipTarget').focus(); return; }
+  const my = ++token;
+  const cfg = { quality: parseInt($('mipSlider').value, 10) || 75, orient: $('mipOrient').value, margin: parseFloat($('mipMargin').value) || 0 };
+  const list = items.slice();
+  clearResult(); setMsg(''); setBusy(true);
+  $('mipProg').hidden = false; prog(0, 'Shuru ho raha hai...');
+  try {
+    const info = outMode === 'pdf' ? await processPdf(list, cfg, auto, T, my) : await processJpgs(list, cfg, auto, T, my);
+    if (!info || my !== token) return;
+    result = info.result;
+    const orig = list.reduce((s, it) => s + it.file.size, 0);
+    prog(100);
+    $('mipStat').textContent = (info.ok ? '✔ ' : '⚠ ') + info.label + ' tayyar' + (outMode === 'pdf' ? ': ' + fmt(info.outBytes) : '');
+    $('mipStat').classList.toggle('warn', !info.ok);
+    $('mipMeta').textContent = 'Original: ' + fmt(orig) + '  →  Ab: ' + fmt(info.outBytes) +
+      (auto ? '  (target: ' + fmt(T) + (outMode === 'pdf' ? ' kul PDF' : ' har JPG') + ')' : '') +
+      (info.note ? '  •  ' + info.note : '') + (info.failed.length ? '  •  ' + info.failed.length + ' photo skip hui (read nahi ho saki)' : '');
+    $('mipResult').hidden = false;
+    $('mipProgText').textContent = 'Download shuru ho gaya. Na aaye to "Download again" dabayein.';
+    deliver();
+  } catch (e) {
+    if (my === token) { $('mipProg').hidden = true; setMsg(e && e.message ? e.message : 'Convert fail ho gaya. Kam photos ke sath dobara try karein.', 'err'); }
+  } finally {
+    if (my === token) setBusy(false);
+  }
+}
+$('mipGo').addEventListener('click', run);
+$('mipAgain').addEventListener('click', deliver);
+
+/* ---------- central reset hook ---------- */
+ToolReset.register('multipdf', function () {
+  token++; busy = false; items = []; result = null;
+  outMode = 'pdf';
+  $('mipFile').value = ''; $('mipSlider').value = 75; $('mipOrient').value = 'portrait'; $('mipMargin').value = '5'; $('mipZip').checked = true;
+  $('mipTarget').value = 400; $('mipUnit').value = 'KB'; $('mipAuto').checked = true;
+  $('mipBar').style.width = ''; $('mipProg').hidden = true; $('mipProgText').textContent = '';
+  $('mipSpin').hidden = true; $('mipGoText').textContent = 'Convert & Download';
+  clearResult(); setMsg('');
+  syncUI(); render();
+});
+syncUI(); render();
+})();
+</script>
+
+<!-- ============================================================
+     SCRIPT: AI Photo & Document Enhancer  (100% client-side, canvas ImageData; no external API)
+     ============================================================ -->
+<script id="enhScript">
+(function () {
+'use strict';
+/*ENGINE-START*/
+function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+function isSkin(r, g, b) {
+  var mx = r > g ? (r > b ? r : b) : (g > b ? g : b), mn = r < g ? (r < b ? r : b) : (g < b ? g : b);
+  return r > 95 && g > 40 && b > 20 && r > g && r > b && r - g > 15 && mx - mn > 15;
+}
+/* separable box blur (running sum), RGB only */
+function blur(src, w, h, r) {
+  var st = w * 4, k = 2 * r + 1, tmp = new Uint8ClampedArray(src.length), out = new Uint8ClampedArray(src.length), x, y, c, s, i, row;
+  for (y = 0; y < h; y++) { row = y * st;
+    for (c = 0; c < 3; c++) {
+      s = 0; for (i = -r; i <= r; i++) s += src[row + clamp(i, 0, w - 1) * 4 + c];
+      for (x = 0; x < w; x++) { tmp[row + x * 4 + c] = s / k; s += src[row + Math.min(w - 1, x + r + 1) * 4 + c] - src[row + Math.max(0, x - r) * 4 + c]; }
+    } }
+  for (x = 0; x < w; x++) {
+    for (c = 0; c < 3; c++) {
+      s = 0; for (i = -r; i <= r; i++) s += tmp[clamp(i, 0, h - 1) * st + x * 4 + c];
+      for (y = 0; y < h; y++) { out[y * st + x * 4 + c] = s / k; s += tmp[Math.min(h - 1, y + r + 1) * st + x * 4 + c] - tmp[Math.max(0, y - r) * st + x * 4 + c]; }
+    } }
+  return out;
+}
+/* Document mode: even out shadows / uneven light so paper turns clean white and text stays dark */
+function flatten(d, w, h) {
+  var L = Math.max(w, h), k = Math.max(2, Math.ceil(L / 150)), sw = Math.ceil(w / k), sh = Math.ceil(h / k), n = sw * sh;
+  var sum = new Float32Array(n), cnt = new Float32Array(n), a = new Float32Array(n), b = new Float32Array(n), i, x, y, p, j, yy, xx, t, m, s, q, c2;
+  for (y = 0; y < h; y++) for (x = 0; x < w; x++) { p = (y * w + x) * 4; j = ((y / k) | 0) * sw + ((x / k) | 0); sum[j] += d[p] * .299 + d[p + 1] * .587 + d[p + 2] * .114; cnt[j]++; }
+  for (i = 0; i < n; i++) a[i] = sum[i] / (cnt[i] || 1);
+  for (y = 0; y < sh; y++) for (x = 0; x < sw; x++) { m = 0;
+    for (yy = Math.max(0, y - 2); yy <= Math.min(sh - 1, y + 2); yy++) for (xx = Math.max(0, x - 2); xx <= Math.min(sw - 1, x + 2); xx++) if (a[yy * sw + xx] > m) m = a[yy * sw + xx];
+    b[y * sw + x] = m; }
+  for (t = 0; t < 2; t++) { c2 = new Float32Array(n);
+    for (y = 0; y < sh; y++) for (x = 0; x < sw; x++) { s = 0; q = 0;
+      for (yy = Math.max(0, y - 1); yy <= Math.min(sh - 1, y + 1); yy++) for (xx = Math.max(0, x - 1); xx <= Math.min(sw - 1, x + 1); xx++) { s += b[yy * sw + xx]; q++; }
+      c2[y * sw + x] = s / q; }
+    b = c2; }
+  var x0 = new Int32Array(w), x1 = new Int32Array(w), xt = new Float32Array(w), fx;
+  for (x = 0; x < w; x++) { fx = clamp(x / k - .5, 0, sw - 1); x0[x] = fx | 0; x1[x] = Math.min(sw - 1, x0[x] + 1); xt[x] = fx - x0[x]; }
+  for (y = 0; y < h; y++) {
+    var fy = clamp(y / k - .5, 0, sh - 1), y0 = fy | 0, y1 = Math.min(sh - 1, y0 + 1), ty = fy - y0;
+    for (x = 0; x < w; x++) {
+      var top = b[y0 * sw + x0[x]] * (1 - xt[x]) + b[y0 * sw + x1[x]] * xt[x], bot = b[y1 * sw + x0[x]] * (1 - xt[x]) + b[y1 * sw + x1[x]] * xt[x];
+      var bg = top * (1 - ty) + bot * ty, f = clamp(242 / Math.max(bg, 50), .92, 2.4); f = 1 + (f - 1) * .9;
+      p = (y * w + x) * 4; d[p] *= f; d[p + 1] *= f; d[p + 2] *= f;
+    } }
+}
+/* Smart denoise: blend toward a blurred copy only where the difference is small (grain), edges stay untouched */
+function denoise(d, w, h, P) {
+  var s = P.den / 100, r = Math.max(w, h) > 2400 ? 2 : 1, bl = blur(blur(d, w, h, r), w, h, r), N = w * h, i, p;
+  var sig = 8 + 45 * s, st = .35 + .6 * s;
+  for (i = 0; i < N; i++) {
+    p = i * 4; var R = d[p], G = d[p + 1], B = d[p + 2];
+    var df = (Math.abs(R - bl[p]) + Math.abs(G - bl[p + 1]) + Math.abs(B - bl[p + 2])) / 3, sg = sig, ss = st;
+    if (P.skin && isSkin(R, G, B)) { sg = sig * 1.8; ss = Math.min(.97, st * 1.25); }
+    var wt = ss * Math.exp(-(df * df) / (2 * sg * sg));
+    d[p] = R + (bl[p] - R) * wt; d[p + 1] = G + (bl[p + 1] - G) * wt; d[p + 2] = B + (bl[p + 2] - B) * wt;
+  }
+}
+/* Auto levels (histogram stretch) + auto exposure gamma + contrast/brightness in one LUT */
+function levels(d, N, P) {
+  var H = [new Uint32Array(256), new Uint32Array(256), new Uint32Array(256), new Uint32Array(256)], step = N > 1500000 ? 3 : 1, tot = 0, i, c, v;
+  for (i = 0; i < N; i += step) { var p = i * 4, r = d[p], g = d[p + 1], b = d[p + 2]; H[0][r]++; H[1][g]++; H[2][b]++; H[3][(r * 77 + g * 150 + b * 29) >> 8]++; tot++; }
+  function lowPct(hh, f) { var s = 0, t = f * tot; for (var q = 0; q < 256; q++) { s += hh[q]; if (s > t) return q; } return 0; }
+  function topPct(hh, f) { var s = 0, t = f * tot; for (var q = 255; q >= 0; q--) { s += hh[q]; if (s > t) return q; } return 255; }
+  var lo = [0, 0, 0], hi = [255, 255, 255], gam = 1;
+  if (P.auto) {
+    var cl = P.doc ? .01 : .004, ch = P.doc ? .12 : .004, ll = lowPct(H[3], cl), lh = topPct(H[3], ch);
+    for (c = 0; c < 3; c++) {
+      lo[c] = (lowPct(H[c], cl) + ll) / 2; hi[c] = (topPct(H[c], ch) + lh) / 2;
+      if (hi[c] - lo[c] < 50) { var mid = (hi[c] + lo[c]) / 2; lo[c] = mid - 25; hi[c] = mid + 25; }
+    }
+    if (!P.doc) {
+      var m = 0, rng = Math.max(20, lh - ll);
+      for (i = 0; i < 256; i++) m += H[3][i] * clamp((i - ll) / rng, 0, 1);
+      m = clamp(m / tot, .05, .95); gam = Math.log(.5) / Math.log(m); gam = 1 + (clamp(gam, .6, 1.3) - 1) * .8;
+    }
+  }
+  var cf = 1 + P.con / 100, bf = P.bri / 200, lut = [new Uint8ClampedArray(256), new Uint8ClampedArray(256), new Uint8ClampedArray(256)];
+  for (c = 0; c < 3; c++) for (v = 0; v < 256; v++) {
+    var x = clamp((v - lo[c]) / (hi[c] - lo[c]), 0, 1); x = Math.pow(x, gam); x = (x - .5) * cf + .5 + bf; lut[c][v] = x * 255;
+  }
+  for (i = 0; i < N; i++) { var q2 = i * 4; d[q2] = lut[0][d[q2]]; d[q2 + 1] = lut[1][d[q2 + 1]]; d[q2 + 2] = lut[2][d[q2 + 2]]; }
+}
+/* Vibrance: boosts dull colours more than already-saturated ones, protects skin tones */
+function vibrance(d, N, v) {
+  for (var i = 0; i < N; i++) {
+    var p = i * 4, r = d[p], g = d[p + 1], b = d[p + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b), sat = mx ? (mx - mn) / mx : 0;
+    var amt = v * (1 - sat) * (isSkin(r, g, b) ? .5 : 1) * 1.2, gr = r * .299 + g * .587 + b * .114;
+    d[p] = gr + (r - gr) * (1 + amt); d[p + 1] = gr + (g - gr) * (1 + amt); d[p + 2] = gr + (b - gr) * (1 + amt);
+  }
+}
+/* Unsharp mask on luminance only (no colour fringes), with a small threshold so noise is not sharpened */
+function unsharp(d, w, h, amt) {
+  var r = clamp(Math.round(Math.max(w, h) / 900), 1, 4), bl = blur(blur(d, w, h, r), w, h, r), N = w * h, k = amt * 2.2, thr = 3;
+  for (var i = 0; i < N; i++) {
+    var p = i * 4, dl = (d[p] - bl[p]) * .299 + (d[p + 1] - bl[p + 1]) * .587 + (d[p + 2] - bl[p + 2]) * .114, a = Math.abs(dl);
+    if (a < thr) dl *= a / thr;
+    dl *= k; d[p] += dl; d[p + 1] += dl; d[p + 2] += dl;
+  }
+}
+function enhance(src, w, h, P) {
+  var d = new Uint8ClampedArray(src), N = w * h;
+  if (P.doc) flatten(d, w, h);
+  if (P.den > 0) denoise(d, w, h, P);
+  levels(d, N, P);
+  if (P.vib > 0) vibrance(d, N, P.vib / 100);
+  if (P.sharp > 0) unsharp(d, w, h, P.sharp / 100);
+  return d;
+}
+/*ENGINE-END*/
+
+var $ = function (id) { return document.getElementById(id); };
+var file = $('enhFile'), drop = $('enhDrop'), msg = $('enhMsg'), editor = $('enhEditor'), stage = $('enhStage'),
+    bCv = $('enhBefore'), aCv = $('enhAfter'), hd = $('enhHd'), saveBtn = $('enhSave'), stat = $('enhStat'), dims = $('enhDims');
+if (!file || !bCv) return;
+var bCx = bCv.getContext('2d', { willReadFrequently: true }), aCx = aCv.getContext('2d');
+var MODES = {
+  auto:     { sharp: 45, con: 10, bri: 0, den: 25, vib: 30, auto: true, doc: false, skin: false },
+  doc:      { sharp: 70, con: 30, bri: 5, den: 15, vib: 0,  auto: true, doc: true,  skin: false },
+  portrait: { sharp: 30, con: 8,  bri: 4, den: 40, vib: 20, auto: true, doc: false, skin: true }
+};
+var SL = { sharp: 'enhSharp', con: 'enhCon', bri: 'enhBri', den: 'enhDen', vib: 'enhVib' };
+var S = { img: null, url: null, name: 'photo', pd: null, pw: 0, ph: 0, mode: 'auto', busy: false, raf: 0 };
+var P = Object.assign({}, MODES.auto);
+
+function setMsg(t, bad) { msg.textContent = t || ''; msg.className = 'aad-msg' + (bad ? ' err' : ''); }
+function syncControls() {
+  Object.keys(SL).forEach(function (k) { $(SL[k]).value = P[k]; $(SL[k] + 'V').textContent = (k === 'con' || k === 'bri') && P[k] > 0 ? '+' + P[k] : P[k]; });
+  $('enhAuto').checked = !!P.auto;
+  document.querySelectorAll('.enh-mode').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === S.mode)); });
+}
+function render() {
+  S.raf = 0; if (!S.pd) return;
+  try { aCx.putImageData(new ImageData(enhance(S.pd.data, S.pw, S.ph, P), S.pw, S.ph), 0, 0); } catch (e) { console.error(e); }
+}
+function schedule() { if (!S.raf) S.raf = requestAnimationFrame(render); }
+function setMode(m) { S.mode = m; P = Object.assign({}, MODES[m], { up: P.up }); syncControls(); stat.hidden = true; schedule(); }
+function setPos(p) {
+  p = clamp(p, 0, 100); bCv.style.clipPath = 'inset(0 ' + (100 - p) + '% 0 0)'; hd.style.left = p + '%'; hd.setAttribute('aria-valuenow', Math.round(p));
+}
+
+function freeImage() { if (S.url) { try { URL.revokeObjectURL(S.url); } catch (e) {} } S.url = null; S.img = null; S.pd = null; }
+function loadFile(f) {
+  if (!f) return;
+  if (!/^image\/(jpeg|png|webp)$/i.test(f.type) && !/\.(jpe?g|png|webp)$/i.test(f.name)) { setMsg('Sirf JPG, PNG ya WEBP photo chunein.', true); return; }
+  freeImage(); setMsg('Photo load ho rahi hai…');
+  var url = URL.createObjectURL(f), img = new Image();
+  img.onload = function () {
+    S.url = url; S.img = img; S.name = (f.name || 'photo').replace(/\.[^.]+$/, '').replace(/[^\w\-]+/g, '_').slice(0, 40) || 'photo';
+    var cap = window.innerWidth < 700 ? 900 : 1280, sc = Math.min(1, cap / Math.max(img.naturalWidth, img.naturalHeight));
+    S.pw = Math.max(1, Math.round(img.naturalWidth * sc)); S.ph = Math.max(1, Math.round(img.naturalHeight * sc));
+    bCv.width = aCv.width = S.pw; bCv.height = aCv.height = S.ph;
+    bCx.imageSmoothingQuality = 'high'; bCx.drawImage(img, 0, 0, S.pw, S.ph);
+    S.pd = bCx.getImageData(0, 0, S.pw, S.ph);
+    dims.textContent = img.naturalWidth + ' × ' + img.naturalHeight + ' px';
+    editor.hidden = false; saveBtn.disabled = false; stat.hidden = true; setPos(50); setMode('auto'); setMsg('');
+  };
+  img.onerror = function () { try { URL.revokeObjectURL(url); } catch (e) {} setMsg('Yeh photo open nahi ho payi. Kripya dusri JPG/PNG try karein.', true); };
+  img.src = url;
+}
+
+/* events */
+file.addEventListener('change', function () { loadFile(file.files && file.files[0]); });
+['dragenter', 'dragover'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+['dragleave', 'drop'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
+drop.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) loadFile(f); });
+document.querySelectorAll('.enh-mode').forEach(function (b) { b.addEventListener('click', function () { setMode(b.dataset.mode); }); });
+Object.keys(SL).forEach(function (k) {
+  $(SL[k]).addEventListener('input', function () {
+    P[k] = parseInt(this.value, 10) || 0; $(SL[k] + 'V').textContent = (k === 'con' || k === 'bri') && P[k] > 0 ? '+' + P[k] : P[k]; stat.hidden = true; schedule();
+  });
+});
+$('enhAuto').addEventListener('change', function () { P.auto = this.checked; stat.hidden = true; schedule(); });
+$('enhUp').addEventListener('change', function () { P.up = this.checked; });
+$('enhReset').addEventListener('click', function () { setMode(S.mode); });
+$('enhChange').addEventListener('click', function () { file.value = ''; file.click(); });
+
+var drag = false;
+function mv(e) { var r = stage.getBoundingClientRect(); setPos((e.clientX - r.left) / r.width * 100); }
+stage.addEventListener('pointerdown', function (e) { drag = true; try { stage.setPointerCapture(e.pointerId); } catch (x) {} mv(e); });
+stage.addEventListener('pointermove', function (e) { if (drag) mv(e); });
+['pointerup', 'pointercancel'].forEach(function (t) { stage.addEventListener(t, function () { drag = false; }); });
+hd.addEventListener('keydown', function (e) {
+  var v = parseFloat(hd.getAttribute('aria-valuenow')) || 50;
+  if (e.key === 'ArrowLeft') { setPos(v - 3); e.preventDefault(); } else if (e.key === 'ArrowRight') { setPos(v + 3); e.preventDefault(); }
+});
+
+/* full-resolution export (PNG, so the trial gate counts it like the other tools' PNG downloads) */
+saveBtn.addEventListener('click', function () {
+  if (!S.img || S.busy) return;
+  S.busy = true; saveBtn.disabled = true; saveBtn.textContent = 'HD process ho raha hai…'; stat.hidden = true;
+  setTimeout(function () {
+    var c = null;
+    function done() { S.busy = false; saveBtn.disabled = !S.img; saveBtn.textContent = 'Download HD Enhanced Image'; if (c) { c.width = c.height = 0; } }
+    try {
+      var nw = S.img.naturalWidth, nh = S.img.naturalHeight, sc = P.up ? 2 : 1;
+      sc = Math.min(sc, Math.sqrt(12e6 / (nw * nh)), 5600 / Math.max(nw, nh));
+      var W = Math.max(1, Math.round(nw * sc)), H = Math.max(1, Math.round(nh * sc));
+      c = document.createElement('canvas'); c.width = W; c.height = H;
+      var x = c.getContext('2d', { willReadFrequently: true }); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+      x.drawImage(S.img, 0, 0, W, H);
+      var id = x.getImageData(0, 0, W, H);
+      x.putImageData(new ImageData(enhance(id.data, W, H, P), W, H), 0, 0);
+      c.toBlob(function (blob) {
+        if (!blob) { setMsg('Image export fail ho gaya. Choti photo try karein.', true); done(); return; }
+        var url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = 'AJM_HD_Enhanced_' + S.name + '.png'; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        stat.textContent = '✓ Ho gaya: ' + W + ' × ' + H + ' px, ' + (blob.size / 1048576).toFixed(2) + ' MB (PNG)'; stat.hidden = false;
+        done();
+      }, 'image/png');
+    } catch (err) { console.error(err); setMsg('Process fail hua (memory kam ho sakti hai). Choti photo try karein.', true); done(); }
+  }, 40);
+});
+
+ToolReset.register('enhancer', function () {
+  if (S.raf) { cancelAnimationFrame(S.raf); S.raf = 0; }
+  freeImage(); S.busy = false; S.mode = 'auto'; P = Object.assign({}, MODES.auto);
+  editor.hidden = true; saveBtn.disabled = true; saveBtn.textContent = 'Download HD Enhanced Image'; stat.hidden = true; stat.textContent = '';
+  dims.textContent = ''; setMsg(''); syncControls(); $('enhUp').checked = false; setPos(50);
+});
+syncControls(); setPos(50);
+})();
+</script>
+
+<!-- ============================================================
      SCRIPT 3: Portal - tool registry, dashboard, filters, routing
      ------------------------------------------------------------
      HOW TO TURN A "COMING SOON" TOOL INTO A REAL ONE
@@ -5752,7 +6674,9 @@ const ICON = {
   jpg:     svg('<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/>'),
   pdfzip:  svg('<path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5"/><path d="M12 18v-6M9.5 14.5 12 12l2.5 2.5"/>'),
   idcard:  svg('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M14 9h4M14 12h4M6 17h12"/>'),
-  photocomp: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="9" r="2.5"/><path d="M8 17c.7-2 2.2-3 4-3s3.3 1 4 3"/>')
+  photocomp: svg('<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="9" r="2.5"/><path d="M8 17c.7-2 2.2-3 4-3s3.3 1 4 3"/>'),
+  multipdf: svg('<rect x="3" y="3" width="11" height="13" rx="1.5"/><path d="M7 20h10a2 2 0 0 0 2-2V8"/><path d="M6 13l2.2-2.4 1.8 1.8 1.4-1.2L13 13"/>'),
+  enhancer: svg('<path d="M5 19 15 9"/><path d="m14 4 .7 1.8 1.8.7-1.8.7L14 9l-.7-1.8-1.8-.7 1.8-.7z"/><path d="m19 12 .5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z"/>')
 };
 
 /* status: 'active' opens `view`; 'soon' shows the notification. cats: which filters list it. */
@@ -5778,7 +6702,11 @@ const TOOLS = [
   {id:'whatsapp', title:'WhatsApp Crop & Editing', cats:['image'], icon:ICON.wa, color:'#16a34a', status:'active', isNew:true, view:'view-whatsapp',
    desc:'Fix tilted, blurry WhatsApp photos of certificates and ID cards (single page or front + back) and print on 4×6, A4 or A5.'},
   {id:'photocomp', title:'Passport Size Photo Compressor', cats:['image'], icon:ICON.photocomp, color:'#4f46e5', status:'active', isNew:true, view:'passport-compressor-view',
-   desc:'Compress and resize photos for online forms and passport size prints.'}
+   desc:'Compress and resize photos for online forms and passport size prints.'},
+  {id:'multipdf', title:'Multi-Image to PDF & Size Compressor', cats:['image','pdf'], icon:ICON.multipdf, color:'#0ea5e9', status:'active', isNew:true, view:'view-multipdf',
+   desc:'Combine 1 to 30+ JPG/PNG photos into one A4 PDF or compressed JPGs. Enter one target size (KB/MB) and every photo is fitted in a single click.'},
+  {id:'enhancer', title:'AI Photo & Document Enhancer (HD Quality Booster)', cats:['image'], icon:ICON.enhancer, color:'#9333ea', status:'active', isNew:true, view:'view-enhancer',
+   desc:'Sharpen blurry photos and documents, fix dark or faded lighting, remove grain. One-click Auto, Document/ID and Portrait modes with a Before/After slider. 100% in your browser.'}
 ];
 
 const grid = document.getElementById('toolGrid');
